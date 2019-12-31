@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ProgressBar
+        android:id="@+id/loader_view"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/status_text_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/status_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toTopOf="@id/start_simple"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <Button
+        android:id="@+id/start_simple"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="96dp"
+        android:text="simple"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/start_zip"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:text="with zip"
+        app:layout_constraintLeft_toRightOf="@id/start_simple"
+        app:layout_constraintTop_toTopOf="@id/start_simple" />
+
+    <Button
+        android:id="@+id/start_error"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:text="error"
+        app:layout_constraintLeft_toRightOf="@id/start_zip"
+        app:layout_constraintTop_toTopOf="@id/start_simple" />
+
+    <Button
+        android:id="@+id/start_long"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:text="long task"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/start_simple" />
+
+    <Button
+        android:id="@+id/start_flatmap"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:text="flatMap"
+        app:layout_constraintLeft_toRightOf="@id/start_long"
+        app:layout_constraintTop_toBottomOf="@id/start_simple" />
+
+    <Button
+        android:id="@+id/dismiss_button"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:text="dismiss"
+        app:layout_constraintLeft_toRightOf="@id/start_flatmap"
+        app:layout_constraintTop_toBottomOf="@id/start_simple" />
+
+    <TextView
+        android:id="@+id/log_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/start_long"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
