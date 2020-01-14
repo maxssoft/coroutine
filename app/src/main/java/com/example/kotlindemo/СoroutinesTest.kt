@@ -40,7 +40,9 @@ class Interactor {
     suspend fun doLongTask(): String {
         logger.log("start doLongTask()")
         for (i in 1..30) {
+            logger.log("doLongTask() step $i")
             delay(1000L)
+            // Thread.sleep(1000L)
         }
         logger.log("finish doLongTask()")
         return "doLongTask completed"
@@ -106,7 +108,7 @@ class Presenter {
     fun loadSimple() {
         logger.clear()
         // Запускае корневую корутину в основном скоупе
-        mainScope.launch {
+        mainScope.launch(exceptionHandler) {
             showProgress()
 
             // Запускаем дочернюю корутину на фоновом потоке и получаем ее результат
@@ -125,7 +127,7 @@ class Presenter {
         logger.clear()
 
         // Запускае корневую корутину в основном скоупе
-        mainScope.launch {
+        mainScope.launch(exceptionHandler) {
             showProgress()
 
             // Запускаем дочернюю корутину на фоновом потоке и дожидаемся ее завершения
@@ -147,15 +149,13 @@ class Presenter {
     fun loadWithZip() {
         logger.clear()
         // Запускае корневую корутину в основном скоупе
-        mainScope.launch {
+        mainScope.launch(exceptionHandler) {
             showProgress()
 
             // запускаем 2 паралельные фоновые задачи
             // запуск через async() не будет ждать завершения задачи
             val task1 = async(Dispatchers.Default) { interactor.doTask1() }
             val task2 = async(Dispatchers.Default) { interactor.doTask2() }
-            val taskWithError =
-                async(Dispatchers.Default) { interactor.doTaskWithException() }
 
             // Ждем завершения запущеннных задач и забираем из них результат
             // await() - дожидается выполнения задачи и возвращает ее результат
@@ -173,7 +173,6 @@ class Presenter {
      * Пример обработки исключений при выполнении фоновых задач
      */
     fun loadWithError() {
-        CoroutineScope(Dispatchers.Default + exceptionHandler).launch {  }
         logger.clear()
         // Стартуем фоновый процесс в основном mainScope
         mainScope.launch(exceptionHandler) {
@@ -200,7 +199,7 @@ class Presenter {
 
     fun loadLongTask() {
         logger.clear()
-        mainScope.launch {
+        mainScope.launch(exceptionHandler) {
             showProgress()
 
             // Выполняем длинную вложенную фоновую задачу и получаем ее результат
