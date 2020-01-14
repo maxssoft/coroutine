@@ -82,13 +82,39 @@
         app:layout_constraintLeft_toRightOf="@id/start_flatmap"
         app:layout_constraintTop_toBottomOf="@id/start_simple" />
 
-    <TextView
-        android:id="@+id/log_text_view"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/start_rx"
+        android:layout_width="@dimen/button_width"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="start rx"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/start_long" />
+
+    <Button
+        android:id="@+id/start_coroutine"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:text="start cor"
+        app:layout_constraintLeft_toRightOf="@id/start_rx"
+        app:layout_constraintTop_toBottomOf="@id/start_long" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/start_long"/>
+        app:layout_constraintTop_toBottomOf="@id/start_rx"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/log_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"/>
+
+    </ScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

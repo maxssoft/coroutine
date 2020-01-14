@@ -4,6 +4,9 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import kotlinx.coroutines.*
+import rx.Single
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import java.lang.RuntimeException
 import java.lang.StringBuilder
 
@@ -41,8 +44,9 @@ class Interactor {
         logger.log("start doLongTask()")
         for (i in 1..30) {
             logger.log("doLongTask() step $i")
-            delay(1000L)
-            // Thread.sleep(1000L)
+            //delay(1000L)
+            Thread.sleep(1000L)
+            yield() // позволяет системе прерывать функцию
         }
         logger.log("finish doLongTask()")
         return "doLongTask completed"
@@ -54,6 +58,18 @@ class Interactor {
         logger.log("throw doTaskWithException()")
         throw RuntimeException("Error of method doTaskWithException")
         return "doTaskWithException completed"
+    }
+
+    fun doRxTask(): Single<String> {
+        return Single.fromCallable {
+            Thread.sleep(100L)
+            "doRxTask()"
+        }
+    }
+
+    suspend fun doCoroutineTask(): String {
+        Thread.sleep(100L)
+        return "doCoroutineTask()"
     }
 }
 
@@ -192,11 +208,56 @@ class Presenter {
         }
     }
 
-    private fun handleException(error: Throwable) {
-        logger.log("error: $error")
-        view?.hideProgress()
+    /**
+     * Тест на время выполнения 1000 RX вызовов
+     */
+    fun loadRx(stepList: StepList) {
+        logger.clear()
+        showProgress()
+        logger.log("rx start ${stepList.count} tasks")
+
+        for (step in 1..stepList.count) {
+            interactor.doRxTask()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                        // logger.log("rx step $step finished")
+                        stepList.finishStep()
+                        if (stepList.isFinished) {
+                            hideProgress()
+                            logger.log("rx all task finished at ${stepList.workTimeMs} ms")
+                        }
+                    }, this::handleException)
+
+        }
     }
 
+    /**
+     * Тест на время выполнения 1000 паралельных корутин
+     */
+    fun loadCoroutine(stepList: StepList) {
+        logger.clear()
+        showProgress()
+        logger.log("coroutine start ${stepList.count} tasks")
+
+        for (step in 1..stepList.count) {
+            mainScope.launch(exceptionHandler) {
+                val result = withContext(Dispatchers.Default) {
+                    interactor.doCoroutineTask()
+                }
+                // logger.log("coroutine step $step finished")
+                stepList.finishStep()
+                if (stepList.isFinished) {
+                    hideProgress()
+                    logger.log("coroutine all task finished at ${stepList.workTimeMs} ms")
+                }
+            }
+        }
+    }
+
+    /**
+     * Запускает длительную задачу для проверки отмены выполнения корутины
+     */
     fun loadLongTask() {
         logger.clear()
         mainScope.launch(exceptionHandler) {
@@ -209,6 +270,15 @@ class Presenter {
             hideProgress()
         }
     }
+
+    /**
+     * Отображает ошибку во вью
+     */
+    private fun handleException(error: Throwable) {
+        logger.log("error: $error")
+        view?.hideProgress()
+    }
+
 
     /**
      * Функции, обновляющие view
@@ -226,6 +296,9 @@ class Presenter {
         view?.hideProgress()
     }
 
+    /**
+     * Отменяет выполнение всех корутин скоупа и перенсоздает скоуп
+     */
     @Synchronized
     fun cancel() {
         logger.log("mainScope cancelled")
@@ -244,7 +317,37 @@ class Presenter {
 
 }
 
+/**
+ * Вспомогательный класс для сравнения быстродействия RX и корутин
+ */
+class StepList(val count: Int) {
 
+    private val startTime: Long
+    private var finishTime: Long = 0L
+
+    init {
+        startTime = System.currentTimeMillis()
+    }
+
+    private var finishedCount: Int = 0
+
+    val isFinished: Boolean
+        get() = finishTime > 0
+
+    val workTimeMs: Long
+        get() = finishTime - startTime
+
+    fun finishStep() {
+        finishedCount++
+        if (finishedCount >= count) {
+            finishTime = System.currentTimeMillis()
+        }
+    }
+}
+
+/**
+ * Вспомогательный класс для вывода логов во вью
+ */
 class Logger(private val view: TestView?) {
 
     private val log = StringBuilder()

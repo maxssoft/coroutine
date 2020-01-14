@@ -48,6 +48,12 @@ class MainActivity : AppCompatActivity(), TestView {
         findViewById<Button>(R.id.dismiss_button).setOnClickListener {
             presenter.cancel()
         }
+        findViewById<Button>(R.id.start_rx).setOnClickListener {
+            presenter.loadRx(StepList(STEP_COUNT))
+        }
+        findViewById<Button>(R.id.start_coroutine).setOnClickListener {
+            presenter.loadCoroutine(StepList(STEP_COUNT))
+        }
 
         presenter.attachView(this)
     }
@@ -69,3 +75,5 @@ class MainActivity : AppCompatActivity(), TestView {
     }
 
 }
+
+const val STEP_COUNT = 1000
