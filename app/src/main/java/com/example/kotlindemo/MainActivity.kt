@@ -2,9 +2,14 @@ package com.example.kotlindemo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import com.example.kotlindemo.slide.ImmutableSample
+import com.example.kotlindemo.slide.immutableTest
+import com.example.kotlindemo.slide.listAsTest
+import com.example.kotlindemo.slide.testsequence
 
 class MainActivity : AppCompatActivity(), TestView {
 
@@ -31,7 +36,8 @@ class MainActivity : AppCompatActivity(), TestView {
         loaderView = findViewById(R.id.loader_view)
 
         findViewById<Button>(R.id.start_simple).setOnClickListener {
-            presenter.loadSimple()
+            Handler().post { testsequence() }
+            //presenter.loadSimple()
         }
         findViewById<Button>(R.id.start_zip).setOnClickListener {
             presenter.loadWithZip()
