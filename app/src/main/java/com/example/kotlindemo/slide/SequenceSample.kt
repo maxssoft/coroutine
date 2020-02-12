@@ -1,40 +1,80 @@
 package com.example.kotlindemo.slide
 
 import android.util.Log
+import kotlin.math.min
 
 /**
  * @author Сидоров Максим on 2020-02-03.
  */
 
-var s: String? = null
+var ii = 0
+
+private val listCount: Int
+    get() {
+        return when(tryNumber) {
+            1 -> 10
+            2 -> 100
+            else -> 1000
+        }
+    }
+
+private var tryNumber = 1
+
+const val LIST_COUNT = 100
+
+const val ITERATION_COUNT = 100
+const val TAG = "sequence test" 
+
+class TimeMeter {
+    private var time: Long = 0L
+    var count: Int = 0
+        private set
+
+    val avgTime: Long
+        get() = time / count
+
+    fun addTime(time: Long) {
+        count++
+        this.time = this.time + time
+    }
+
+    fun clear() {
+        count = 0
+        time = 0L
+    }
+}
+
+var sequenceTimeMeter = TimeMeter()
+var listTimeMeter = TimeMeter()
 
 fun testsequence() {
-    var startTime = 0L
-    var finishTime = 0L
-    var time = 0L
-    val list = createList(1000)
-    val count = 10000
+    Log.d(TAG, "test started, count $listCount")
 
-    startTime = System.currentTimeMillis()
-    Log.d("time", "list started at $startTime")
-    for (i in 1..count) {
-        s = listTest(list)
+    sequenceTimeMeter.clear()
+    listTimeMeter.clear()
+    for (i in 1..ITERATION_COUNT) {
+        val list = createList(listCount)
+        ii += sequenceTest(list)
+        ii += listTest(list)
+        if (i % 10 == 0) {
+            Log.d(TAG, "count $i")
+        }
     }
-    finishTime = System.currentTimeMillis()
-    time = finishTime - startTime
-    Log.d("time", "list finished at $finishTime")
-    Log.d("time", "list time = $time")
+    Log.d(TAG, "test finished.........................")
+    Log.d(TAG, "list count = $listCount")
+    Log.d(TAG, "tryNumber = $tryNumber")
 
-
-    startTime = System.currentTimeMillis()
-    Log.d("time", "sequence started at $startTime")
-    for (i in 1..count) {
-        s = sequenceTest(list)
+    tryNumber++
+    if (tryNumber > 3) {
+        tryNumber = 1
     }
-    finishTime = System.currentTimeMillis()
-    time = finishTime - startTime
-    Log.d("time", "sequence finished at $finishTime")
-    Log.d("time", "sequence time = $time")
+
+
+/*
+    Log.d(TAG, "sequence avg  = ${sequenceTimeMeter.avgTime}")
+    Log.d(TAG, "list avg  = ${listTimeMeter.avgTime}")
+*/
+    Log.d(TAG, "ii  = $ii")
 }
 
 fun createList(count: Int): List<Int> {
@@ -45,25 +85,94 @@ fun createList(count: Int): List<Int> {
     return list
 }
 
+/*
+fun listTest(list: List<Int>): Int {
+    var i = 0
+    val items = list
+        .filter {
+            it > 20
+        }
+        .map {
+            it.toString()
+        }
+        .map {
+            it.toInt()
+        }
 
-fun listTest(list: List<Int>): String? {
+    return items.firstOrNull() ?: 0
+}
+
+fun sequenceTest(list: List<Int>): Int {
+    var i = 0
+    val items = list.asSequence()
+        .filter {
+            it > 20
+        }
+        .map {
+            it.toString()
+        }
+        .map {
+            it.toInt()
+        }
+        .toList()
+
+    return items.firstOrNull() ?: 0
+}
+*/
+
+fun listTest(list: List<Int>): Int {
+    val items = list
+        .filter {
+            it > 20
+        }
+        .map {
+            it.toString()
+        }
+        .map {
+            it.toInt()
+        }
+        .filter { it == 33 }
+
+    return items.firstOrNull() ?: 0
+}
+
+fun sequenceTest(list: List<Int>): Int {
+    val items = list.asSequence()
+        .filter {
+            it > 20
+        }
+        .map {
+            it.toString()
+        }
+        .map {
+            it.toInt()
+        }
+        .filter { it == 33 }
+
+    return items.toList().firstOrNull() ?: 0
+}
+
+/*
+fun listTest(list: List<Int>): Int {
     val item = list
-        .filter { it > 2 }
+        .filter { it > 20 }
         .map { it.toString() }
-        .firstOrNull { it == "3" }
+        .map { it.toInt() }
+        .firstOrNull { it == 33 }
 
-    return item
+    return item ?: 0
 }
 
-fun sequenceTest(list: List<Int>): String? {
+fun sequenceTest(list: List<Int>): Int {
     val item = list.asSequence()
-        .filter { it > 2 }
+        .filter { it > 20 }
         .map { it.toString() }
-        .firstOrNull { it == "3" }
+        .map { it.toInt() }
+        .firstOrNull { it == 33 }
 
-    return item
+    return item ?: 0
 }
-
+*/
 /*
 fun sequenceTest(): String? {
     var iii = 1

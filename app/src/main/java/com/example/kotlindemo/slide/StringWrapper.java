@@ -3,6 +3,7 @@ package com.example.kotlindemo.slide;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,6 +30,10 @@ public class StringWrapper {
 
     public static void removeListener(Runnable r) {
         listeners.remove(r);
+    }
+
+    public static String[] getStringArray() {
+        return new String[]{"1", "2", "3"};
     }
 }
 

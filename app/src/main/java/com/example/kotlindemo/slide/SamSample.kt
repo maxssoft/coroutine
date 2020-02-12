@@ -2,6 +2,7 @@ package com.example.kotlindemo.slide
 
 import android.os.Handler
 import android.util.Log
+import java.util.*
 
 /**
  * @author Сидоров Максим on 2020-01-21.
@@ -33,7 +34,10 @@ fun samErrorSample() {
 
     listeners.add { listener }
 
-    listeners.remove { listener }
+    listeners.remove { listener}
 
     listeners.add { Log.d("", "onEvent") }
 }
+
+
+
